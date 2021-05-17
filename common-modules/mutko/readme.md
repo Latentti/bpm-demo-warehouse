@@ -2,7 +2,7 @@
 Module to ease creation, amendment and completion of Mutko forms using camunda.
 
 ### Prerequisites
-* [Axios](https://www.npmjs.com/package/axios) - ```bash npm i axios ```
+* [Axios](https://www.npmjs.com/package/axios) - ```npm i axios ```
 
 ### Environment Variables
 Following environment variables are required
