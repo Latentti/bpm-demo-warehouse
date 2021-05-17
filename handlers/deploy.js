@@ -30,7 +30,11 @@ module.exports = async ( props ) => {
     const responses = await Promise.all(diagramRequests)
 
     responses.forEach((diagram) => {
-      log(`Deployed ${diagram.data.name} [${diagram.data.id}]`, 0)
+      if(diagram.data.deployedProcessDefinitions){
+        log(`Deployed ${diagram.data.name} [${diagram.data.id}]`, 0)
+      }else{
+        log(`Duplicate ignored ${diagram.data.name} [${diagram.data.id}]`)
+      }
     })
   }catch(ex){
     log(`Exception while deploying processes: ${ex.message}`, 3)
