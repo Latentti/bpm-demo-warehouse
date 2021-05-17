@@ -30,7 +30,7 @@ module.exports = async ( props ) => {
     const responses = await Promise.all(diagramRequests)
 
     responses.forEach((diagram) => {
-      log(`Deployed ${diagram.data.name} [${diagram.data.id}]`)
+      log(`Deployed ${diagram.data.name} [${diagram.data.id}]`, 0)
     })
   }catch(ex){
     log(`Exception while deploying processes: ${ex.message}`, 3)

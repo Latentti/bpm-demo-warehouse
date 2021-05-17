@@ -4,7 +4,7 @@ const { Client, logger, BasicAuthInterceptor } = require('camunda-external-task-
 
 const subscribeHandler = require('./handlers/subscribe');
 const deploymentHandler = require('./handlers/deploy');
-const { log } = require('./utils/logger');
+const { log, camundaLogger } = require('./utils/logger');
 
 let start = Date.now();
 
@@ -25,7 +25,8 @@ let start = Date.now();
     interceptors: new BasicAuthInterceptor({
       username: process.env.CAMUNDA_USERNAME || "demo",
       password: process.env.CAMUNDA_PASSWORD || "demo"
-    })
+    }),
+    use: camundaLogger
   };
 
   const client = new Client(camundaConfig);
