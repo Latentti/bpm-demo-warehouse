@@ -10,17 +10,18 @@ let start = Date.now();
 
 (async () => {
   if(process.env.CAMUNDA_DEPLOY && process.env.CAMUNDA_DEPLOY === "true"){
-    log(`Deploying diagrams to Camunda`)
+    log(`Checking deployments to Camunda`)
 
     await deploymentHandler()
 
-    log(`Diagrams deployed in ${Date.now() - start}ms`)
+    log(`Finished deploying in ${Date.now() - start}ms`)
   }else{
     log(`Starting ${process.env.CAMUNDA_WORKER_NAME}`)
   }
 
   const camundaConfig = {
     baseUrl: 'http://localhost:8080/engine-rest',
+    workerId: process.env.CAMUNDA_WORKER_ID || "some-random-id",
     asyncResponseTimeout: 10000,
     interceptors: new BasicAuthInterceptor({
       username: process.env.CAMUNDA_USERNAME || "demo",
