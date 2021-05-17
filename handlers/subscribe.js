@@ -9,7 +9,6 @@ module.exports = async ( client ) => {
     const tasks = fs.readdirSync(mod).filter(file => file.endsWith(".js"));
     tasks.forEach(task => {
       const name = task.slice(0, -3);
-      log(`Loading topic ${name}`)
       client.subscribe(name, async (props) => {
         try{
           log(`Received '${props.task.topicName}' on '${props.task.processDefinitionKey}' [${props.task.processInstanceId}]`)
@@ -18,6 +17,7 @@ module.exports = async ( client ) => {
           await errorHandler( props, client, ex )
         }
       })
+      log(`Subscribed to topic ${name}`)
     })
   })
 }

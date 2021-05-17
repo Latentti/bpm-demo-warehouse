@@ -2,25 +2,31 @@ require('dotenv').config();
 
 const { Client, logger, BasicAuthInterceptor } = require('camunda-external-task-client-js');
 
-const subscribeHandler = require('./handlers/subscribe')
-const start = Date.now()
+const subscribeHandler = require('./handlers/subscribe');
+const deploymentHandler = require('./handlers/deploy');
+const { log } = require('./utils/logger');
 
-const { log } = require('./utils/logger')
+let start = Date.now();
 
-log(`Starting camunda external service`)
+(async () => {
+  log(`Deploying diagrams to Camunda`)
 
-const camundaConfig = {
-  baseUrl: 'http://localhost:8080/engine-rest',
-  use: logger,
-  asyncResponseTimeout: 10000,
-  interceptors: new BasicAuthInterceptor({
-    username: process.env.CAMUNDA_USERNAME || "demo",
-    password: process.env.CAMUNDA_PASSWORD || "demo"
-  })
-};
+  await deploymentHandler()
 
-const client = new Client(camundaConfig);
+  log(`Diagrams deployed in ${Date.now() - start}ms`)
 
-subscribeHandler(client)
+  const camundaConfig = {
+    baseUrl: 'http://localhost:8080/engine-rest',
+    asyncResponseTimeout: 10000,
+    interceptors: new BasicAuthInterceptor({
+      username: process.env.CAMUNDA_USERNAME || "demo",
+      password: process.env.CAMUNDA_PASSWORD || "demo"
+    })
+  };
 
-log(`Service loaded in ${Date.now() - start}ms`)
+  const client = new Client(camundaConfig);
+
+  subscribeHandler(client)
+
+  log(`${process.env.CAMUNDA_WORKER_NAME} loaded in ${Date.now() - start}ms`)
+})()
