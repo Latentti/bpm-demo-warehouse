@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const fs = require('fs');
 const { Client, logger } = require('camunda-external-task-client-js');
-const modules = [...fs.readdirSync('./common-modules/').map((mod) => `./common-modules/${mod}`), ...fs.readdirSync('./modules/').map((mod) => `./modules/${mod}`)];
+const modules = fs.readdirSync('./modules/').map((mod) => `./modules/${mod}`);
 const start = Date.now()
 
 const { log } = require('./utils/logger')
