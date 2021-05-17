@@ -9,11 +9,15 @@ const { log } = require('./utils/logger');
 let start = Date.now();
 
 (async () => {
-  log(`Deploying diagrams to Camunda`)
+  if(process.env.CAMUNDA_DEPLOY && process.env.CAMUNDA_DEPLOY === "true"){
+    log(`Deploying diagrams to Camunda`)
 
-  await deploymentHandler()
+    await deploymentHandler()
 
-  log(`Diagrams deployed in ${Date.now() - start}ms`)
+    log(`Diagrams deployed in ${Date.now() - start}ms`)
+  }else{
+    log(`Starting ${process.env.CAMUNDA_WORKER_NAME}`)
+  }
 
   const camundaConfig = {
     baseUrl: 'http://localhost:8080/engine-rest',
