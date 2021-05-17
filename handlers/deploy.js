@@ -11,6 +11,8 @@ module.exports = async ( props ) => {
     let formData = new FormData()
     formData.append('deployment-name', diagram)
     formData.append('deployment-source', process.env.CAMUNDA_WORKER_NAME)
+    formData.append('enable-duplicate-filtering', "true")
+    formData.append('deploy-changed-only', "true")
     formData.append('upload', fs.createReadStream(`./diagrams/${diagram}/${diagram}.bpmn`))
 
     return axios.post(`${process.env.BASEURL}/deployment/create`, formData, {
