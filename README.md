@@ -1,0 +1,1 @@
+# latentti-camunda-template
