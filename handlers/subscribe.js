@@ -13,7 +13,7 @@ module.exports = async ( client ) => {
       client.subscribe(name, async (props) => {
         try{
           log(`Received '${props.task.topicName}' on '${props.task.processDefinitionKey}' [${props.task.processInstanceId}]`)
-          await require(`${mod}/${task}`)( props, client, log )
+          await require(`.${mod}/${task}`)( props, client, log )
         }catch(ex){
           await errorHandler( props, client, ex )
         }
