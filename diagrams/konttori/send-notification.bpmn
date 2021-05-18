@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1jy0m7g" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.8.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="Process-send-konttori-message" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Send direct konttori message">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Sender" label="Message sender" type="string" />
+          <camunda:formField id="NotificationTitle" label="Message title" type="string" />
+          <camunda:formField id="NotificationBody" label="Message body" type="string" />
+          <camunda:formField id="PhoneNumber" label="Konttori user phone number" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_146rifm</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_146rifm" sourceRef="StartEvent_1" targetRef="Activity_0w8xmo0" />
+    <bpmn:endEvent id="Event_1h7it3o" name="Message sent successfully">
+      <bpmn:incoming>Flow_0e4hjmh</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0e4hjmh" sourceRef="Activity_0w8xmo0" targetRef="Event_1h7it3o" />
+    <bpmn:serviceTask id="Activity_0w8xmo0" name="Send message" camunda:type="external" camunda:topic="konttori-send-notification">
+      <bpmn:incoming>Flow_146rifm</bpmn:incoming>
+      <bpmn:incoming>Flow_0pmtb61</bpmn:incoming>
+      <bpmn:outgoing>Flow_0e4hjmh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_15ne5w9" sourceRef="Event_18gbv0y" targetRef="Activity_044ux09" />
+    <bpmn:userTask id="Activity_044ux09" name="Phone number wrong">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="PhoneNumber" label="Phone number" type="string" defaultValue="${PhoneNumber}" />
+          <camunda:formField id="Title" label="Title" type="string" defaultValue="${NotificationTitle}" />
+          <camunda:formField id="Body" label="Message" type="string" defaultValue="${NotificationBody}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_15ne5w9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pmtb61</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_18gbv0y" attachedToRef="Activity_0w8xmo0">
+      <bpmn:outgoing>Flow_15ne5w9</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1i893i9" errorRef="Error_00a0tph" camunda:errorCodeVariable="errorNotFound" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0pmtb61" sourceRef="Activity_044ux09" targetRef="Activity_0w8xmo0" />
+  </bpmn:process>
+  <bpmn:error id="Error_1qa3vqt" />
+  <bpmn:error id="Error_00a0tph" name="Phone Number not Found Error" errorCode="PhoneNumberNotFound" />
+  <bpmn:error id="Error_0d04nca" name="Error_3o41k3h" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process-send-konttori-message">
+      <bpmndi:BPMNEdge id="Flow_146rifm_di" bpmnElement="Flow_146rifm">
+        <di:waypoint x="218" y="240" />
+        <di:waypoint x="400" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0e4hjmh_di" bpmnElement="Flow_0e4hjmh">
+        <di:waypoint x="500" y="240" />
+        <di:waypoint x="722" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15ne5w9_di" bpmnElement="Flow_15ne5w9">
+        <di:waypoint x="470" y="182" />
+        <di:waypoint x="470" y="120" />
+        <di:waypoint x="530" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pmtb61_di" bpmnElement="Flow_0pmtb61">
+        <di:waypoint x="580" y="160" />
+        <di:waypoint x="580" y="220" />
+        <di:waypoint x="500" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1hkst3h_di" bpmnElement="Activity_0w8xmo0">
+        <dc:Bounds x="400" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1h7it3o_di" bpmnElement="Event_1h7it3o">
+        <dc:Bounds x="722" y="222" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="706" y="265" width="69" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="222" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="265" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ca1ote_di" bpmnElement="Activity_044ux09">
+        <dc:Bounds x="530" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_00pb9gn_di" bpmnElement="Event_18gbv0y">
+        <dc:Bounds x="452" y="182" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
