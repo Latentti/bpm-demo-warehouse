@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0s72lks" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.8.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="HardwareWarehouseQueryProcess" isExecutable="true">
+    <bpmn:startEvent id="StartToolsQueryProcess" name="Käynnistä työkalukysely" camunda:formKey="embedded:/forms/formio.html?deployment=invitationStart.json&#38;var=submission&#38;transient=true">
+      <bpmn:outgoing>Flow_1gs3pxb</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1gs3pxb" sourceRef="StartToolsQueryProcess" targetRef="Activity_00rcxb2" />
+    <bpmn:exclusiveGateway id="Gateway_1w8ha3f">
+      <bpmn:incoming>Flow_1molpd5</bpmn:incoming>
+      <bpmn:outgoing>Flow_1n0fww1</bpmn:outgoing>
+      <bpmn:outgoing>Flow_04y36lp</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1molpd5" sourceRef="Activity_00rcxb2" targetRef="Gateway_1w8ha3f" />
+    <bpmn:sequenceFlow id="Flow_1n0fww1" name="Löytyy varastosta" sourceRef="Gateway_1w8ha3f" targetRef="Activity_078ih60">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Warehouse == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1egdele" sourceRef="Activity_1dzsmvs" targetRef="Activity_0v6phaj" />
+    <bpmn:sequenceFlow id="Flow_04y36lp" name="Ei löydy varastosta" sourceRef="Gateway_1w8ha3f" targetRef="Activity_1fjp0ts">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Warehouse == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_1m7z4yl" name="Työkalun varastovaraus valmis">
+      <bpmn:incoming>Flow_18kp2ui</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1m1xpnb" sourceRef="Activity_0v6phaj" targetRef="Activity_00fby8z" />
+    <bpmn:sequenceFlow id="Flow_1pvti7b" sourceRef="Event_1535jrg" targetRef="Activity_1wbu1b6" />
+    <bpmn:sequenceFlow id="Flow_1c80iez" sourceRef="Activity_1wbu1b6" targetRef="Activity_0iwop5w" />
+    <bpmn:sequenceFlow id="Flow_12zlq17" sourceRef="Activity_1fjp0ts" targetRef="Event_0ujy5gl" />
+    <bpmn:intermediateCatchEvent id="Event_0ujy5gl">
+      <bpmn:incoming>Flow_12zlq17</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gx3jvx</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1pk4yo1">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P1D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:task id="Activity_0lhhtc9" name="Pyydä tilatietoa vuokrauksesta">
+      <bpmn:incoming>Flow_1gx3jvx</bpmn:incoming>
+      <bpmn:outgoing>Flow_08fn857</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1gx3jvx" sourceRef="Event_0ujy5gl" targetRef="Activity_0lhhtc9" />
+    <bpmn:task id="Activity_1obs5q5" name="Tallenna vuokraustiedot">
+      <bpmn:incoming>Flow_08fn857</bpmn:incoming>
+      <bpmn:incoming>Flow_15c6lwv</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lx7bhc</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_08fn857" sourceRef="Activity_0lhhtc9" targetRef="Activity_1obs5q5" />
+    <bpmn:endEvent id="Event_0p7ql2a" name="Työkalun vuokraus valmis">
+      <bpmn:incoming>Flow_0lx7bhc</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0lx7bhc" sourceRef="Activity_1obs5q5" targetRef="Event_0p7ql2a" />
+    <bpmn:boundaryEvent id="Event_1m7yvnr" name="Odotetaan vastausta 240min" cancelActivity="false" attachedToRef="Activity_0lhhtc9">
+      <bpmn:outgoing>Flow_0eg9lcg</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1p01103">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT240M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0eg9lcg" sourceRef="Event_1m7yvnr" targetRef="Activity_0peoi1y" />
+    <bpmn:userTask id="Activity_0peoi1y" name="Soitetaan lisätiedot">
+      <bpmn:incoming>Flow_0eg9lcg</bpmn:incoming>
+      <bpmn:outgoing>Flow_15c6lwv</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_15c6lwv" sourceRef="Activity_0peoi1y" targetRef="Activity_1obs5q5" />
+    <bpmn:task id="Activity_0iwop5w" name="Peru varaston vahvistuspyyntö">
+      <bpmn:incoming>Flow_1c80iez</bpmn:incoming>
+      <bpmn:outgoing>Flow_1p76a30</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1p76a30" sourceRef="Activity_0iwop5w" targetRef="Event_14clzcp" />
+    <bpmn:serviceTask id="Activity_00rcxb2" name="Tarkista varastotilanne" camunda:type="external" camunda:topic="demo-random-warehouse">
+      <bpmn:incoming>Flow_1gs3pxb</bpmn:incoming>
+      <bpmn:outgoing>Flow_1molpd5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1dzsmvs" name="Ilmoita sijainti" camunda:type="external" camunda:topic="konttori-send-notification">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="PhoneNumber">+${recipient}</camunda:inputParameter>
+          <camunda:inputParameter name="Sender">Varastohallinta</camunda:inputParameter>
+          <camunda:inputParameter name="NotificationBody">${Tool} löytyy omasta varastosta. Sijainnissa ${Location}. Vahvista varaus pikaisesti linkistä ${FORMURL}</camunda:inputParameter>
+          <camunda:inputParameter name="NotificationTitle">Työkaluvaraus</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0nm1en0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1egdele</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1fjp0ts" name="Ilmoita vuokrauksesta ja ohjeet" camunda:type="external" camunda:topic="konttori-send-notification">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="PhoneNumber">+${recipient}</camunda:inputParameter>
+          <camunda:inputParameter name="Sender">Varastohallinta</camunda:inputParameter>
+          <camunda:inputParameter name="NotificationTitle">Työkaluvaraus</camunda:inputParameter>
+          <camunda:inputParameter name="NotificationBody">${Tool} ei löydy omasta varastosta. Voit käydä vuokraamassa vuokraamosta ${Rental}. Vuokraamisen jälkeen muistathan vastata vuokrauskyselyyn.</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_04y36lp</bpmn:incoming>
+      <bpmn:outgoing>Flow_12zlq17</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0nm1en0" sourceRef="Activity_078ih60" targetRef="Activity_1dzsmvs" />
+    <bpmn:serviceTask id="Activity_078ih60" name="Luo varaus välineelle" camunda:type="external" camunda:topic="mutko-form-create">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="RECIPIENT">${recipient}</camunda:inputParameter>
+          <camunda:inputParameter name="TEMPLATEID">7b056186</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1n0fww1</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nm1en0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0v6phaj" name="Odota vahvistusta varasto varaukselle" camunda:type="external" camunda:topic="mutko-form-subscribe-submitted">
+      <bpmn:incoming>Flow_1egdele</bpmn:incoming>
+      <bpmn:outgoing>Flow_1m1xpnb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1wbu1b6" name="Ilmoita varauksen peruuntumisesta" camunda:type="external" camunda:topic="konttori-send-notification">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="Sender">Varastohallinta</camunda:inputParameter>
+          <camunda:inputParameter name="NotificationBody">Työkalun ${Tool} varaus on peruttu varastosta koska työkaluvarausta ei ole vahvistettu.</camunda:inputParameter>
+          <camunda:inputParameter name="NotificationTitle">Työkaluvaraus</camunda:inputParameter>
+          <camunda:inputParameter name="PhoneNumber">+${recipient}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1pvti7b</bpmn:incoming>
+      <bpmn:outgoing>Flow_1c80iez</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_1535jrg" attachedToRef="Activity_0v6phaj">
+      <bpmn:outgoing>Flow_1pvti7b</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1dz0ti2">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT180M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Event_14clzcp" name="Peruttu työkaluvaraus">
+      <bpmn:incoming>Flow_1p76a30</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Activity_00fby8z" name="Kirjataan varaston järjestelmään">
+      <bpmn:incoming>Flow_1m1xpnb</bpmn:incoming>
+      <bpmn:outgoing>Flow_18kp2ui</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_18kp2ui" sourceRef="Activity_00fby8z" targetRef="Event_1m7z4yl" />
+    <bpmn:textAnnotation id="TextAnnotation_1y1jazq">
+      <bpmn:text>Mutko lomake joka täytetään konttorin kautta</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1rmqjbk" sourceRef="StartToolsQueryProcess" targetRef="TextAnnotation_1y1jazq" />
+    <bpmn:textAnnotation id="TextAnnotation_15mexg1">
+      <bpmn:text>Odotetaan vastausta 180min</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1k6rwem" sourceRef="Event_1535jrg" targetRef="TextAnnotation_15mexg1" />
+    <bpmn:textAnnotation id="TextAnnotation_08beyiu">
+      <bpmn:text>Odotetaan 1 päivä</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_18zaxti" sourceRef="Event_0ujy5gl" targetRef="TextAnnotation_08beyiu" />
+    <bpmn:textAnnotation id="TextAnnotation_1agx7h3">
+      <bpmn:text>Lähetetään viesti käyttäjälle jossa pyydetään vuokraustietoja</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1t1fuyk" sourceRef="Activity_0lhhtc9" targetRef="TextAnnotation_1agx7h3" />
+    <bpmn:textAnnotation id="TextAnnotation_0lxrzws">
+      <bpmn:text>Lähetetään viestinä ohjeistukset vuokraamiselle</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_153r22c" sourceRef="Activity_1fjp0ts" targetRef="TextAnnotation_0lxrzws" />
+    <bpmn:textAnnotation id="TextAnnotation_10mde4t">
+      <bpmn:text>Latentti Oy - Case demo
+
+Työkalunvarausprosessi
+
+Varauksen aloittamiseen ja eri vaiheiden tietojen keräämiseen käytetään Latentin lomakepalvelua jolloin tietojen kerääminen ohjaa prosessin kulkua
+
+Prosessin aloitus ja eri vaiheiden viestintä tapahtuu yrityksen viestintätyökaluun kyseiselle henkilölle</bpmn:text>
+    </bpmn:textAnnotation>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="HardwareWarehouseQueryProcess">
+      <bpmndi:BPMNEdge id="Flow_0nm1en0_di" bpmnElement="Flow_0nm1en0">
+        <di:waypoint x="770" y="460" />
+        <di:waypoint x="840" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1p76a30_di" bpmnElement="Flow_1p76a30">
+        <di:waypoint x="1380" y="610" />
+        <di:waypoint x="1432" y="610" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15c6lwv_di" bpmnElement="Flow_15c6lwv">
+        <di:waypoint x="1270" y="310" />
+        <di:waypoint x="1270" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0eg9lcg_di" bpmnElement="Flow_0eg9lcg">
+        <di:waypoint x="1080" y="288" />
+        <di:waypoint x="1080" y="350" />
+        <di:waypoint x="1220" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lx7bhc_di" bpmnElement="Flow_0lx7bhc">
+        <di:waypoint x="1320" y="230" />
+        <di:waypoint x="1432" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08fn857_di" bpmnElement="Flow_08fn857">
+        <di:waypoint x="1110" y="230" />
+        <di:waypoint x="1220" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gx3jvx_di" bpmnElement="Flow_1gx3jvx">
+        <di:waypoint x="908" y="230" />
+        <di:waypoint x="1010" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12zlq17_di" bpmnElement="Flow_12zlq17">
+        <di:waypoint x="770" y="230" />
+        <di:waypoint x="872" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1c80iez_di" bpmnElement="Flow_1c80iez">
+        <di:waypoint x="1220" y="610" />
+        <di:waypoint x="1280" y="610" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pvti7b_di" bpmnElement="Flow_1pvti7b">
+        <di:waypoint x="1080" y="518" />
+        <di:waypoint x="1080" y="610" />
+        <di:waypoint x="1120" y="610" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1m1xpnb_di" bpmnElement="Flow_1m1xpnb">
+        <di:waypoint x="1110" y="460" />
+        <di:waypoint x="1220" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04y36lp_di" bpmnElement="Flow_04y36lp">
+        <di:waypoint x="550" y="315" />
+        <di:waypoint x="550" y="230" />
+        <di:waypoint x="670" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="564" y="246" width="51" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1egdele_di" bpmnElement="Flow_1egdele">
+        <di:waypoint x="940" y="460" />
+        <di:waypoint x="1010" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1n0fww1_di" bpmnElement="Flow_1n0fww1">
+        <di:waypoint x="550" y="365" />
+        <di:waypoint x="550" y="460" />
+        <di:waypoint x="670" y="460" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="567" y="383" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1molpd5_di" bpmnElement="Flow_1molpd5">
+        <di:waypoint x="430" y="340" />
+        <di:waypoint x="525" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gs3pxb_di" bpmnElement="Flow_1gs3pxb">
+        <di:waypoint x="238" y="340" />
+        <di:waypoint x="330" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18kp2ui_di" bpmnElement="Flow_18kp2ui">
+        <di:waypoint x="1320" y="460" />
+        <di:waypoint x="1432" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartToolsQueryProcess">
+        <dc:Bounds x="202" y="322" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="188" y="365" width="66" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1w8ha3f_di" bpmnElement="Gateway_1w8ha3f" isMarkerVisible="true">
+        <dc:Bounds x="525" y="315" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1m7z4yl_di" bpmnElement="Event_1m7z4yl">
+        <dc:Bounds x="1432" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1415" y="485" width="70" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_115gvyz_di" bpmnElement="Event_0ujy5gl">
+        <dc:Bounds x="872" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0lhhtc9_di" bpmnElement="Activity_0lhhtc9">
+        <dc:Bounds x="1010" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1obs5q5_di" bpmnElement="Activity_1obs5q5">
+        <dc:Bounds x="1220" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0p7ql2a_di" bpmnElement="Event_0p7ql2a">
+        <dc:Bounds x="1432" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1411" y="255" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0kvwtnf_di" bpmnElement="Activity_0peoi1y">
+        <dc:Bounds x="1220" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0iwop5w_di" bpmnElement="Activity_0iwop5w">
+        <dc:Bounds x="1280" y="570" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1xr9lhx_di" bpmnElement="Activity_00rcxb2">
+        <dc:Bounds x="330" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0utajgu_di" bpmnElement="Activity_1dzsmvs">
+        <dc:Bounds x="840" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0hu69gm_di" bpmnElement="Activity_1fjp0ts">
+        <dc:Bounds x="670" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1a2v13t_di" bpmnElement="Activity_078ih60">
+        <dc:Bounds x="670" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1c1qlg8_di" bpmnElement="Activity_0v6phaj">
+        <dc:Bounds x="1010" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0epr6ro_di" bpmnElement="Activity_1wbu1b6">
+        <dc:Bounds x="1120" y="570" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0f94a1v_di" bpmnElement="Event_14clzcp">
+        <dc:Bounds x="1432" y="592" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1416" y="635" width="68" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1y1jazq_di" bpmnElement="TextAnnotation_1y1jazq">
+        <dc:Bounds x="270" y="150" width="100" height="54" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_15mexg1_di" bpmnElement="TextAnnotation_15mexg1">
+        <dc:Bounds x="1155" y="485" width="100" height="54" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_08beyiu_di" bpmnElement="TextAnnotation_08beyiu">
+        <dc:Bounds x="880" y="80" width="140" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1agx7h3_di" bpmnElement="TextAnnotation_1agx7h3">
+        <dc:Bounds x="1110" y="80" width="190" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0lxrzws_di" bpmnElement="TextAnnotation_0lxrzws">
+        <dc:Bounds x="700" y="80" width="120" height="54" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_10mde4t_di" bpmnElement="TextAnnotation_10mde4t">
+        <dc:Bounds x="180" y="500" width="370" height="152" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00fby8z_di" bpmnElement="Activity_00fby8z">
+        <dc:Bounds x="1220" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ss4s3e_di" bpmnElement="Event_1535jrg">
+        <dc:Bounds x="1062" y="482" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1keem4o_di" bpmnElement="Event_1m7yvnr">
+        <dc:Bounds x="1062" y="252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1036" y="356" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1rmqjbk_di" bpmnElement="Association_1rmqjbk">
+        <di:waypoint x="229" y="325" />
+        <di:waypoint x="298" y="204" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1k6rwem_di" bpmnElement="Association_1k6rwem">
+        <di:waypoint x="1098" y="500" />
+        <di:waypoint x="1155" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_18zaxti_di" bpmnElement="Association_18zaxti">
+        <di:waypoint x="895" y="213" />
+        <di:waypoint x="926" y="110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1t1fuyk_di" bpmnElement="Association_1t1fuyk">
+        <di:waypoint x="1088" y="190" />
+        <di:waypoint x="1137" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_153r22c_di" bpmnElement="Association_153r22c">
+        <di:waypoint x="728" y="190" />
+        <di:waypoint x="739" y="134" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

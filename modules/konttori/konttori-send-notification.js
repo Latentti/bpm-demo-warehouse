@@ -3,7 +3,7 @@ const { Variables, } = require('camunda-external-task-client-js');
 const api = require('./utils/api');
 
 module.exports = async ({ task, taskService }, client) => {
-  const phoneNumber = task.variables.get("PhoneNumber");
+  let phoneNumber = task.variables.get("PhoneNumber");
   const title = task.variables.get("NotificationTitle");
   const body = task.variables.get("NotificationBody")
   const sender = task.variables.get("Sender")
@@ -18,6 +18,8 @@ module.exports = async ({ task, taskService }, client) => {
       details: "KONTTORI_MISSING_REQUIRED_VARIABLE"
     })
   }
+
+  console.log(phoneNumber)
 
   /*
    *  Build payload
