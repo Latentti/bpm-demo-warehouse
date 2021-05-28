@@ -1,4 +1,4 @@
 /node_modules
 .env
-.lock
+.yarn.lock
 .DS_Store
