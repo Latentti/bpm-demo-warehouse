@@ -3,7 +3,7 @@ const { Variables } = require('camunda-external-task-client-js');
 module.exports = async ({ task, taskService }, client) => {
 
   // Just for demo purposes generating random values
-  const randomWarehouseStatus = true // Math.random() < 0.5
+  const randomWarehouseStatus = Math.random() < 0.5
   const locations = ['Kivikko', 'Espoonlahti', 'Koivuhaka', 'Herttoniemi', 'Lohja', 'Veikkola', 'Tuusula']
   const rentals = ['Ramirent', 'Cramo', 'RT-Konevuokraus', 'Bauhaus']
 

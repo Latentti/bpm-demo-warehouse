@@ -19,8 +19,6 @@ module.exports = async ({ task, taskService }, client) => {
     })
   }
 
-  console.log(phoneNumber)
-
   /*
    *  Build payload
    */
